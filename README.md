@@ -1,10 +1,10 @@
-# 🚀 SaaS Predictivo de Conversión
+ SaaS Predictivo de Conversión
 
 > Detecta abandonos de carrito con 48h de anticipación usando IA. Recupera 25-40% de ventas perdidas automáticamente.
 
 ---
 
-## 📊 Qué es
+## Qué es
 
 Sistema de análisis predictivo que utiliza **LSTM + Prophet** para detectar clientes a punto de abandonar su carrito en tu tienda online, **antes de que lo hagan**.
 
@@ -40,7 +40,7 @@ Alertas: SendGrid (email) + Twilio (SMS)
 
 ---
 
-## 🚀 Inicio Rápido (5 minutos)
+## Inicio Rápido (5 minutos)
 
 ### Prerequisitos
 
@@ -48,7 +48,7 @@ Alertas: SendGrid (email) + Twilio (SMS)
 - Docker + Docker Compose
 - PostgreSQL (o usar compose)
 
-### 1️⃣ Clonar & Setup
+###  Clonar & Setup
 
 ```bash
 git clone https://github.com/tuuser/saas-predictor.git
@@ -316,7 +316,7 @@ Personaliza templates en el código.
 
 ---
 
-## 🧠 Cómo funciona el AI
+## 👁️Cómo funciona el AI
 
 ### LSTM Predictor
 
@@ -448,6 +448,6 @@ MIT License - mira [LICENSE](./LICENSE)
 
 ---
 
-**Hecho con ❤️ para ecommerce empresarios que quieren recuperar cada venta.**
+**Hecho para personas de exito en ingenieroai.pro damos soluciones no fracaso ayuda para ecommerce empresarios que quieren recuperar cada venta.**
 
 [⭐ Dale star si te sirve! ⭐]
