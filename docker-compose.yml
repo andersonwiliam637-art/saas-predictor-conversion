@@ -1,0 +1,173 @@
+version: '3.8'
+
+services:
+  # ========================================================================
+  # DATABASE: PostgreSQL
+  # ========================================================================
+  db:
+    image: postgres:15-alpine
+    container_name: saas_db
+    environment:
+      POSTGRES_USER: ${DB_USER:-saas_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-saas_password}
+      POSTGRES_DB: ${DB_NAME:-saas_db}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=es_ES.UTF-8"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - saas_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-saas_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ========================================================================
+  # CACHE: Redis (para alertas y sesiones)
+  # ========================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: saas_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - saas_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ========================================================================
+  # BACKEND: FastAPI
+  # ========================================================================
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: saas_backend
+    environment:
+      # Base de datos
+      DATABASE_URL: postgresql://${DB_USER:-saas_user}:${DB_PASSWORD:-saas_password}@db:5432/${DB_NAME:-saas_db}
+      
+      # Seguridad
+      SECRET_KEY: ${SECRET_KEY:-your-super-secret-key-change-in-prod-please}
+      
+      # APIs Externas
+      SENDGRID_API_KEY: ${SENDGRID_API_KEY:-}
+      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID:-}
+      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN:-}
+      TWILIO_PHONE_NUMBER: ${TWILIO_PHONE_NUMBER:-}
+      
+      # Shopify
+      SHOPIFY_API_KEY: ${SHOPIFY_API_KEY:-}
+      SHOPIFY_API_SECRET: ${SHOPIFY_API_SECRET:-}
+      
+      # MercadoLibre
+      MERCADOLIBRE_CLIENT_ID: ${MERCADOLIBRE_CLIENT_ID:-}
+      MERCADOLIBRE_CLIENT_SECRET: ${MERCADOLIBRE_CLIENT_SECRET:-}
+      
+      # Stripe
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      
+      # Environment
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      DEBUG: ${DEBUG:-false}
+      
+      # Redis
+      REDIS_URL: redis://redis:6379
+      
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    networks:
+      - saas_network
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    restart: unless-stopped
+
+  # ========================================================================
+  # FRONTEND: Streamlit Dashboard
+  # ========================================================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: saas_frontend
+    environment:
+      BACKEND_URL: http://backend:8000
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "8501:8501"
+    depends_on:
+      - backend
+    networks:
+      - saas_network
+    restart: unless-stopped
+
+  # ========================================================================
+  # WORKER: Procesar predicciones en background (Celery/RQ)
+  # ========================================================================
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: saas_worker
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-saas_user}:${DB_PASSWORD:-saas_password}@db:5432/${DB_NAME:-saas_db}
+      REDIS_URL: redis://redis:6379
+      SENDGRID_API_KEY: ${SENDGRID_API_KEY:-}
+      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID:-}
+      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN:-}
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+    depends_on:
+      - db
+      - redis
+      - backend
+    networks:
+      - saas_network
+    command: python -m scripts.worker
+    restart: unless-stopped
+    
+  # ========================================================================
+  # INGESTA: Sync de Shopify/MercadoLibre en background
+  # ========================================================================
+  data_sync:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: saas_data_sync
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-saas_user}:${DB_PASSWORD:-saas_password}@db:5432/${DB_NAME:-saas_db}
+      SHOPIFY_API_KEY: ${SHOPIFY_API_KEY:-}
+      SHOPIFY_API_SECRET: ${SHOPIFY_API_SECRET:-}
+      MERCADOLIBRE_CLIENT_ID: ${MERCADOLIBRE_CLIENT_ID:-}
+      MERCADOLIBRE_CLIENT_SECRET: ${MERCADOLIBRE_CLIENT_SECRET:-}
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+    depends_on:
+      - db
+    networks:
+      - saas_network
+    command: python -m scripts.data_sync
+    restart: unless-stopped
+
+networks:
+  saas_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local

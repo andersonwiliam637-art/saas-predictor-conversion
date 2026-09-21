@@ -1,0 +1,419 @@
+<!-- ============================================================================
+  COMPONENTE DE PAGO — ingenieroai.pro
+  PayPal + Transferencia Bancaria (BAM / Banco Industrial)
+  
+  CÓMO USARLO:
+  1. Pega el <link> de Google Fonts (abajo) dentro de tu <head>, si aún no
+     tienes "Space Grotesk", "IBM Plex Mono" o "Inter" cargadas.
+  2. Pega el bloque <section id="pagos">...</section> donde quieras mostrarlo
+     (recomendado: justo debajo de tu sección de Leads Inmobiliarios).
+  3. Pega el <style> dentro de tu <head> o en tu hoja de estilos.
+  4. Pega el <script> antes de cerrar </body>.
+  5. Reemplaza los 4 valores marcados con "⚠️ REEMPLAZA":
+     - Tu usuario de PayPal.me
+     - Número de cuenta BAM
+     - Número de cuenta Banco Industrial
+     - (Tu número de WhatsApp ya está puesto: 502 5415 4016)
+============================================================================ -->
+
+<!-- 1) FUENTES (pega en <head>) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- 2) SECCIÓN DE PAGO (pega donde quieras mostrarla) -->
+<section id="pagos" class="pay-section">
+  <div class="pay-header">
+    <span class="pay-eyebrow">Métodos de pago</span>
+    <h2 class="pay-title">Elige cómo pagar</h2>
+    <p class="pay-subtitle">Pago seguro por PayPal o transferencia directa a mis cuentas en Guatemala.</p>
+  </div>
+
+  <div class="pay-grid">
+
+    <!-- ============ CARD 1: PAYPAL ============ -->
+    <div class="pay-card pay-card--paypal">
+      <div class="pay-card-icon">🅿️</div>
+      <h3>Pagar con PayPal</h3>
+      <p class="pay-card-desc">Tarjeta de crédito, débito o saldo PayPal. Ideal si estás fuera de Guatemala.</p>
+
+      <div class="plan-select" role="group" aria-label="Selecciona tu plan">
+        <button type="button" class="plan-btn active" data-plan="Plan Básico" data-usd="26" data-gtq="199">
+          <span class="plan-name">Básico</span>
+          <span class="plan-price">$26 USD</span>
+        </button>
+        <button type="button" class="plan-btn" data-plan="Plan Pro" data-usd="45" data-gtq="349">
+          <span class="plan-name">Pro</span>
+          <span class="plan-price">$45 USD</span>
+        </button>
+        <button type="button" class="plan-btn" data-plan="Plan Premium" data-usd="77" data-gtq="599">
+          <span class="plan-name">Premium</span>
+          <span class="plan-price">$77 USD</span>
+        </button>
+      </div>
+
+      <a id="paypal-cta" class="btn-paypal" href="#" target="_blank" rel="noopener">
+        Continuar a PayPal — <span id="paypal-amount">$26 USD</span>
+      </a>
+      <span class="pay-note">*Monto referencial según tipo de cambio del día (≈Q7.75/USD). Si difiere, ajustamos por WhatsApp.</span>
+    </div>
+
+    <!-- ============ CARD 2: TRANSFERENCIA (estilo terminal) ============ -->
+    <div class="pay-card pay-card--terminal">
+      <div class="terminal-bar">
+        <span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span>
+        <span class="terminal-title">transferencia.sh</span>
+      </div>
+
+      <div class="terminal-body">
+        <p class="terminal-line"><span class="prompt">$</span> selecciona_banco</p>
+
+        <div class="bank-tabs" role="tablist">
+          <button type="button" class="bank-tab active" data-bank="bam">BAM</button>
+          <button type="button" class="bank-tab" data-bank="industrial">Banco Industrial</button>
+        </div>
+
+        <!-- BAM -->
+        <div class="bank-details" data-bank-panel="bam">
+          <div class="detail-row"><span>Banco</span><strong>BAM</strong></div>
+          <div class="detail-row"><span>Titular</span><strong>Willy Enríquez Palacios</strong></div>
+          <div class="detail-row"><span>Tipo de cuenta</span><strong>Ahorro</strong></div>
+          <div class="detail-row copy-row">
+            <span>No. Cuenta</span>
+            <strong class="mono" id="acc-bam">40-5012894-3</strong>
+            <button type="button" class="copy-btn" data-copy="acc-bam">Copiar</button>
+          </div>
+        </div>
+
+        <!-- BANCO INDUSTRIAL -->
+        <div class="bank-details" data-bank-panel="industrial" hidden>
+          <div class="detail-row"><span>Banco</span><strong>Banco Industrial</strong></div>
+          <div class="detail-row"><span>Titular</span><strong>Willy Enríquez Palacios</strong></div>
+          <div class="detail-row"><span>Tipo de cuenta</span><strong>Ahorro</strong></div>
+          <div class="detail-row copy-row">
+            <span>No. Cuenta</span>
+            <strong class="mono" id="acc-industrial">1402158</strong>
+            <button type="button" class="copy-btn" data-copy="acc-industrial">Copiar</button>
+          </div>
+        </div>
+
+        <p class="terminal-line"><span class="prompt">$</span> siguiente_paso</p>
+        <ol class="steps-list">
+          <li>Transfiere el monto de tu plan <span class="mono">(Q199 / Q349 / Q599)</span></li>
+          <li>Toma captura o foto del comprobante</li>
+          <li>Envíalo por WhatsApp indicando tu plan</li>
+          <li>Recibes tus leads en menos de 24 horas</li>
+        </ol>
+
+        <a class="btn-whatsapp" href="https://wa.me/50254154016?text=Hola%20Willy%2C%20ya%20hice%20la%20transferencia%2C%20adjunto%20comprobante." target="_blank" rel="noopener">
+          📎 Enviar comprobante por WhatsApp
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="pay-footer">🔒 Pagos verificados manualmente en menos de 24h · Sin comisiones ocultas</p>
+</section>
+
+<!-- 3) ESTILOS -->
+<style>
+  #pagos, #pagos * { box-sizing: border-box; }
+
+  #pagos {
+    --pay-bg: #0D1117;
+    --pay-card: #151B23;
+    --pay-border: #232B36;
+    --pay-text: #E6EDF3;
+    --pay-muted: #8B98A5;
+    --pay-gold: #D4A455;
+    --pay-gold-dim: rgba(212, 164, 85, 0.12);
+    --pay-paypal: #179BD7;
+    --pay-paypal-dark: #253B80;
+    --pay-success: #3FB68B;
+
+    background: var(--pay-bg);
+    color: var(--pay-text);
+    font-family: 'Inter', system-ui, sans-serif;
+    padding: 72px 24px;
+    border-radius: 20px;
+  }
+
+  .pay-header { text-align: center; max-width: 560px; margin: 0 auto 48px; }
+  .pay-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--pay-gold);
+  }
+  .pay-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(28px, 4vw, 38px);
+    font-weight: 700;
+    margin: 10px 0 12px;
+    color: var(--pay-text);
+  }
+  .pay-subtitle { color: var(--pay-muted); font-size: 15px; line-height: 1.5; }
+
+  .pay-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .pay-card {
+    background: var(--pay-card);
+    border: 1px solid var(--pay-border);
+    border-radius: 16px;
+    padding: 28px;
+  }
+
+  /* --- PayPal card --- */
+  .pay-card--paypal .pay-card-icon { font-size: 28px; margin-bottom: 8px; }
+  .pay-card--paypal h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 20px;
+    margin: 0 0 6px;
+  }
+  .pay-card-desc { color: var(--pay-muted); font-size: 14px; margin: 0 0 20px; line-height: 1.5; }
+
+  .plan-select { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .plan-btn {
+    flex: 1;
+    min-width: 88px;
+    background: transparent;
+    border: 1px solid var(--pay-border);
+    border-radius: 10px;
+    padding: 10px 8px;
+    color: var(--pay-muted);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    transition: border-color .15s ease, color .15s ease, background .15s ease;
+    font-family: 'Inter', sans-serif;
+  }
+  .plan-btn .plan-name { font-size: 13px; font-weight: 600; }
+  .plan-btn .plan-price { font-family: 'IBM Plex Mono', monospace; font-size: 12px; }
+  .plan-btn:hover { border-color: var(--pay-gold); color: var(--pay-text); }
+  .plan-btn.active {
+    border-color: var(--pay-gold);
+    background: var(--pay-gold-dim);
+    color: var(--pay-text);
+  }
+
+  .btn-paypal {
+    display: block;
+    text-align: center;
+    background: linear-gradient(135deg, var(--pay-paypal-dark), var(--pay-paypal));
+    color: #fff;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 14px 20px;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: filter .15s ease, transform .15s ease;
+  }
+  .btn-paypal:hover { filter: brightness(1.08); transform: translateY(-1px); }
+
+  .pay-note {
+    display: block;
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--pay-muted);
+    line-height: 1.4;
+  }
+
+  /* --- Terminal card --- */
+  .pay-card--terminal { padding: 0; overflow: hidden; }
+  .terminal-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 16px;
+    background: #10151C;
+    border-bottom: 1px solid var(--pay-border);
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-red { background: #FF5F56; }
+  .dot-yellow { background: #FFBD2E; }
+  .dot-green { background: #27C93F; }
+  .terminal-title {
+    margin-left: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--pay-muted);
+  }
+
+  .terminal-body { padding: 22px 24px 26px; }
+  .terminal-line {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--pay-muted);
+    margin: 0 0 12px;
+  }
+  .terminal-line .prompt { color: var(--pay-success); margin-right: 6px; }
+
+  .bank-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+  .bank-tab {
+    background: transparent;
+    border: 1px solid var(--pay-border);
+    color: var(--pay-muted);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+  .bank-tab:hover { color: var(--pay-text); }
+  .bank-tab.active {
+    background: var(--pay-gold-dim);
+    border-color: var(--pay-gold);
+    color: var(--pay-text);
+  }
+
+  .bank-details {
+    background: #0F141B;
+    border: 1px solid var(--pay-border);
+    border-radius: 10px;
+    padding: 4px 16px;
+    margin-bottom: 18px;
+  }
+  .detail-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--pay-border);
+    font-size: 13px;
+    color: var(--pay-muted);
+  }
+  .detail-row:last-child { border-bottom: none; }
+  .detail-row strong { color: var(--pay-text); font-weight: 600; }
+  .mono { font-family: 'IBM Plex Mono', monospace; }
+
+  .copy-row { gap: 8px; }
+  .copy-btn {
+    background: transparent;
+    border: 1px solid var(--pay-gold);
+    color: var(--pay-gold);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background .15s ease, color .15s ease;
+    white-space: nowrap;
+  }
+  .copy-btn:hover { background: var(--pay-gold); color: #10151C; }
+  .copy-btn.copied { background: var(--pay-success); border-color: var(--pay-success); color: #10151C; }
+
+  .steps-list {
+    margin: 0 0 20px;
+    padding-left: 18px;
+    color: var(--pay-muted);
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .steps-list .mono { color: var(--pay-text); }
+
+  .btn-whatsapp {
+    display: block;
+    text-align: center;
+    background: #25D366;
+    color: #06210F;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 13px 18px;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: filter .15s ease, transform .15s ease;
+  }
+  .btn-whatsapp:hover { filter: brightness(1.05); transform: translateY(-1px); }
+
+  .pay-footer {
+    text-align: center;
+    color: var(--pay-muted);
+    font-size: 12px;
+    margin: 36px 0 0;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  @media (max-width: 480px) {
+    #pagos { padding: 48px 16px; }
+    .terminal-body { padding: 18px; }
+  }
+</style>
+
+<!-- 4) SCRIPT (pega antes de </body>) -->
+<script>
+(function () {
+  // ⚠️ REEMPLAZA con tu usuario real de PayPal.me (créalo gratis en paypal.me)
+  const PAYPAL_USERNAME = "TU_USUARIO_PAYPAL";
+
+  const planButtons = document.querySelectorAll('#pagos .plan-btn');
+  const paypalCta = document.getElementById('paypal-cta');
+  const paypalAmount = document.getElementById('paypal-amount');
+
+  function buildPaypalLink(usd, planName) {
+    // paypal.me/usuario/MONTOusd  -> abre checkout directo con el monto precargado
+    return `https://paypal.me/${PAYPAL_USERNAME}/${usd}usd`;
+  }
+
+  function selectPlan(btn) {
+    planButtons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const usd = btn.dataset.usd;
+    const plan = btn.dataset.plan;
+    paypalAmount.textContent = `$${usd} USD`;
+    paypalCta.href = buildPaypalLink(usd, plan);
+  }
+
+  planButtons.forEach(btn => {
+    btn.addEventListener('click', () => selectPlan(btn));
+  });
+
+  // Set inicial
+  if (planButtons.length) selectPlan(planButtons[0]);
+
+  // Tabs de banco
+  const bankTabs = document.querySelectorAll('#pagos .bank-tab');
+  const bankPanels = document.querySelectorAll('#pagos .bank-details');
+
+  bankTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      bankTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const target = tab.dataset.bank;
+      bankPanels.forEach(p => {
+        p.hidden = p.dataset.bankPanel !== target;
+      });
+    });
+  });
+
+  // Copiar número de cuenta
+  document.querySelectorAll('#pagos .copy-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const targetId = btn.dataset.copy;
+      const text = document.getElementById(targetId).textContent.trim();
+      try {
+        await navigator.clipboard.writeText(text);
+        const original = btn.textContent;
+        btn.textContent = '✓ Copiado';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = original;
+          btn.classList.remove('copied');
+        }, 1800);
+      } catch (e) {
+        alert('Número de cuenta: ' + text);
+      }
+    });
+  });
+})();
+</script>
